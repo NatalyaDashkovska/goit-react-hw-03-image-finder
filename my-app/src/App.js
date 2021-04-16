@@ -1,43 +1,80 @@
 import React, { Component } from 'react';
-import axios from 'axios';
+import Loader from 'react-loader-spinner';
 import './index.css';
 import Searchbar from './components/Searchbar';
 import Button from './components/Button';
+import ImageGallery from './components/ImageGallery';
 import imagesApi from './servises/images-api';
 class App extends Component {
   state = {
-    key: '20431977-9a0c4e5e6a84a634219821f23',
-
-    page: 7,
+    searchQuery: '',
+    page: 1,
     images: [],
+    isLoading: false,
   };
 
-  componentDidMount() {
-    const { key, search, page } = this.state;
-    imagesApi
-      .getLibrary(key, search, page)
-      .then(res => {
-        console.log(res.hits);
-        this.setState({ images: res.hits });
-      })
-      .catch(error => console.log(error));
+  componentDidUpdate(prevProps, prevState) {
+    const { searchQuery, page } = this.state;
+    if (searchQuery !== prevState.searchQuery && searchQuery !== '') {
+      this.fetchImg();
+    } else if (
+      searchQuery === prevState.searchQuery &&
+      page !== prevState.page
+    ) {
+      this.fetchImg();
+    }
   }
-  componentDidUpdate(prevProps, prevState) {}
-  componentWillUnmount() {}
+  onChangeSearch = search => {
+    this.setState({ searchQuery: search, page: 1, images: [] });
+  };
+  fetchImg = (prevProps, prevState) => {
+    const { searchQuery, page } = this.state;
+    this.setState({ isLoading: true });
+    imagesApi
+      .getLibrary(searchQuery, page)
+      .then(res => {
+        this.setState(prevState => ({
+          images: [...prevState.images, ...res.hits],
+        }));
+      })
+      .catch(error => console.log(error))
+      .finally(() => {
+        this.setState({ isLoading: false });
+      });
+  };
+  scrollPageToEnd = () => {
+    setTimeout(() => {
+      window.scrollBy({
+        top: document.documentElement.scrollHeight,
+        behavior: 'smooth',
+      });
+    }, 1000);
+  };
+  loadMore = e => {
+    e.preventDefault();
 
+    this.setState(prevState => ({
+      page: prevState.page + 1,
+    }));
+    this.scrollPageToEnd();
+  };
   render() {
-    const { images } = this.state;
+    const { images, isLoading } = this.state;
 
     return (
       <div className={'App'}>
-        <Searchbar />
+        <Searchbar onSubmit={this.onChangeSearch} />
 
-        <Button />
+        <ImageGallery images={images} />
+        {isLoading && (
+          <Loader type="Hearts" color="#00BFFF" height={80} width={80} />
+        )}
+        {images.length > 0 && !isLoading && <Button page={this.loadMore} />}
       </div>
     );
   }
 }
-
+// this.setState({ images: res.hits });
 export default App;
 
 // https://pixabay.com/api/?q=что_искать&page=номер_страницы&key=твой_ключ&image_type=photo&orientation=horizontal&per_page=12

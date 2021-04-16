@@ -1,16 +1,24 @@
 import React from 'react';
 import styles from './ImageGalleryItem';
+import PropTypes from 'prop-types';
+const ImageGalleryItem = ({ img, getImgForModal }) => {
+  const { webformatURL } = img;
 
-<li className="ImageGalleryItem">
-  <img src="" alt="" className="ImageGalleryItem-image" />
-</li>;
-
-const ImageGalleryItem = (id, img) => {
   return (
-    <li key={id} className={styles.item}>
-      <img src={img} alt="" className={styles.image} />
+    <li className={styles.item}>
+      <img
+        src={webformatURL}
+        alt=""
+        className={styles.image}
+        onClick={() => getImgForModal({ img })}
+      />
     </li>
   );
+};
+
+ImageGalleryItem.propTypes = {
+  img: PropTypes.object.isRequired,
+  getImgForModal: PropTypes.func.isRequired,
 };
 
 export default ImageGalleryItem;

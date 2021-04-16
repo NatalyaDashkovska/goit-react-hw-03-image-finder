@@ -1,18 +1,18 @@
 import React, { Component } from 'react';
 import styles from './Searchbar.module.css';
-
+import PropTypes from 'prop-types';
 class Searchbar extends Component {
   state = { search: '' };
   formSubmit = e => {
-    console.log(e);
-    console.log(this.state.search);
-    console.log(this.state);
     e.preventDefault();
+
     this.props.onSubmit(this.state.search);
 
     this.reset();
   };
-
+  handleChange = e => {
+    this.setState({ search: e.currentTarget.value });
+  };
   reset = () => {
     this.setState({
       search: '',
@@ -31,10 +31,17 @@ class Searchbar extends Component {
             autoComplete="off"
             autoFocus
             placeholder="Search images and photos"
+            onChange={this.handleChange}
+            value={this.state.search}
           />
         </form>
       </header>
     );
   }
 }
+
+Searchbar.propTypes = {
+  onSubmit: PropTypes.func.isRequired,
+};
+
 export default Searchbar;
