@@ -1,7 +1,9 @@
 import React from 'react';
-import styles from './ImageGalleryItem';
+import styles from './ImageGalleryItem.module.css';
 import PropTypes from 'prop-types';
+
 const ImageGalleryItem = ({ img, getImgForModal }) => {
+  // console.log(img);
   const { webformatURL } = img;
 
   return (
@@ -15,10 +17,8 @@ const ImageGalleryItem = ({ img, getImgForModal }) => {
     </li>
   );
 };
-
 ImageGalleryItem.propTypes = {
   img: PropTypes.object.isRequired,
   getImgForModal: PropTypes.func.isRequired,
 };
-
 export default ImageGalleryItem;

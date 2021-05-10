@@ -24,15 +24,18 @@ class App extends Component {
       this.fetchImg();
     }
   }
-  onChangeSearch = search => {
+  onChangeSearch = ({ search }) => {
+    this.setState({ searchQuery: '', page: 1, images: [] });
     this.setState({ searchQuery: search, page: 1, images: [] });
   };
   fetchImg = (prevProps, prevState) => {
     const { searchQuery, page } = this.state;
     this.setState({ isLoading: true });
+    // console.log(searchQuery);
     imagesApi
       .getLibrary(searchQuery, page)
       .then(res => {
+        // console.log(res);
         this.setState(prevState => ({
           images: [...prevState.images, ...res.hits],
         }));
@@ -40,23 +43,19 @@ class App extends Component {
       .catch(error => console.log(error))
       .finally(() => {
         this.setState({ isLoading: false });
+        window.scrollTo({
+          top: document.documentElement.scrollHeight,
+          behavior: 'smooth',
+        });
       });
   };
-  scrollPageToEnd = () => {
-    setTimeout(() => {
-      window.scrollBy({
-        top: document.documentElement.scrollHeight,
-        behavior: 'smooth',
-      });
-    }, 1000);
-  };
+
   loadMore = e => {
     e.preventDefault();
 
     this.setState(prevState => ({
       page: prevState.page + 1,
     }));
-    this.scrollPageToEnd();
   };
   render() {
     const { images, isLoading } = this.state;
