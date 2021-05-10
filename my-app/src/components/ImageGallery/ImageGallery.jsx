@@ -15,10 +15,12 @@ class ImageGallery extends Component {
   };
   getImgForModal = ({ img }) => {
     if (img) {
-      this.toggleModal();
       this.setState({
         img,
       });
+      if (this.state.img) {
+        this.toggleModal();
+      }
     }
   };
   render() {
